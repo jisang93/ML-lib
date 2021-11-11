@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pickle
@@ -131,3 +132,47 @@ class PerformanceEval:
               f"Recall: {rec_score.mean():.4f} / "
               f"F1 score : {F1_score.mean():.4f}")
         return pd.DataFrame(confusion_matrix(Y_test, pred))
+
+
+# For Checking clusters
+def show_results(data, log_likelihood, k, prediction, num_columns):
+    """
+    Args:
+        data(list or np.ndarray): training data(shape=[n_samples, n_features])
+        log_likelihood(list): log-likelihood result of fitting
+        k(int): the number of clusters
+        prediction(np.ndarray): predict reulst
+        num_columns(list): index numbers of two columns want to check
+    Returns:
+        line graph and scatter of data
+    """
+    # Concatenate source data and prediction
+    columns = [f"feature{i+1}" for i in range(data.shape[1])]
+    num_columns = [f"feature{i+1}" for i in num_columns]
+    df = pd.DataFrame(data, columns=columns)
+    df_p = pd.DataFrame(prediction, columns=["class"])
+    df = pd.concat([df, df_p], axis=1)
+    # Apply graph
+    fig = plt.figure(figsize=(15, 6))
+    ax1 = fig.add_subplot(1, 2, 1)
+    ax2 = fig.add_subplot(1, 2, 2)
+    # Log-likelihood
+    ax1.plot(log_likelihood)
+    ax1.set_title("Log-likelihood")
+    ax1.set_xlabel("iterations")
+    # Scatter with class
+    groups = df.groupby("class")
+    for name, group in groups:
+        ax2.plot(
+            group[num_columns[0]],
+            group[num_columns[1]],
+            marker="o",
+            linestyle="",
+            label=name
+            )
+    ax2.legend()
+    ax2.set_title(f"Scatter plot of data (K={k})")
+    ax2.set_xlabel("feature 1")
+    ax2.set_ylabel("feature 2")
+
+    return plt.show()

@@ -3,5 +3,7 @@
 This is machine learning library.
 
 - Supervised Learning
+  - Clustering
+    - GMM (Gaussian Mixture Model)
   - Discriminant
-    - RDA
+    - RDA (Regularized Discriminant Analysis)
